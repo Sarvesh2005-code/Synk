@@ -1,17 +1,18 @@
 import "../global.css";
-import { Stack } from "expo-router";
-import { useAuth } from "../hooks/useAuth";
-import AuthScreen from "../components/AuthScreen";
+import { Slot } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useAuth } from "../hooks/useAuth";
+import { AuthScreen } from "../components/AuthScreen";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export default function Layout() {
-    const { session, isLoading } = useAuth();
+export default function RootLayout() {
+    const { session, loading } = useAuth();
 
-    if (isLoading) {
+    if (loading) {
         return (
             <View className="flex-1 bg-black items-center justify-center">
-                <ActivityIndicator size="large" color="#FFF" />
+                <ActivityIndicator size="large" color="#3b82f6" />
             </View>
         );
     }
@@ -21,11 +22,11 @@ export default function Layout() {
     }
 
     return (
-        <>
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#000' } }}>
-                <Stack.Screen name="index" />
-            </Stack>
+        <GestureHandlerRootView style={{ flex: 1 }}>
             <StatusBar style="light" />
-        </>
+            <View className="flex-1 bg-black">
+                <Slot />
+            </View>
+        </GestureHandlerRootView>
     );
 }

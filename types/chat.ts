@@ -7,6 +7,8 @@ export interface Message {
     is_optimistic?: boolean;
     type?: 'text' | 'image';
     media_url?: string;
+    parent_id?: string | null;
+    reply_to?: Message | null; // For optimistic UI context
 }
 
 export interface Channel {
