@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useAuth } from "../hooks/useAuth";
 import AuthScreen from "../components/AuthScreen";
 import { View, ActivityIndicator } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 export default function Layout() {
     const { session, isLoading } = useAuth();
@@ -10,7 +11,7 @@ export default function Layout() {
     if (isLoading) {
         return (
             <View className="flex-1 bg-black items-center justify-center">
-                <ActivityIndicator size="large" color="white" />
+                <ActivityIndicator size="large" color="#FFF" />
             </View>
         );
     }
@@ -20,8 +21,11 @@ export default function Layout() {
     }
 
     return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-        </Stack>
+        <>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#000' } }}>
+                <Stack.Screen name="index" />
+            </Stack>
+            <StatusBar style="light" />
+        </>
     );
 }
