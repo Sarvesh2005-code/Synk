@@ -6,7 +6,7 @@ interface ChatState {
     messages: Message[];
     addMessage: (msg: Message) => void;
     setMessages: (msgs: Message[]) => void;
-    sendMessage: (content: string, userId: string, type?: 'text' | 'image', mediaUrl?: string, parentId?: string | null) => Promise<void>;
+    sendMessage: (content: string, userId: string, channelId: string, type?: 'text' | 'image', mediaUrl?: string, parentId?: string | null) => Promise<void>;
     inputText: string;
     setInputText: (text: string) => void;
     replyingTo: Message | null;
@@ -23,13 +23,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
     addMessage: (msg) => set((state) => ({ messages: [msg, ...state.messages] })),
     setMessages: (msgs) => set({ messages: msgs }),
 
-    sendMessage: async (content, userId, type = 'text', mediaUrl, parentId) => {
+    sendMessage: async (content, userId, channelId, type = 'text', mediaUrl, parentId) => {
         // Optimistic Update
         const optimisticMsg: Message = {
             id: Math.random().toString(),
             content,
             user_id: userId,
             created_at: new Date().toISOString(),
+            channel_id: channelId,
             is_optimistic: true,
             type,
             media_url: mediaUrl,
@@ -43,14 +44,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
             replyingTo: null // Clear reply state
         }));
 
-        // Send to Supabase (Hardcoded 'general' channel for MVP)
-        const { data: channel } = await supabase.from('channels').select('id').eq('slug', 'general').single();
-        if (!channel) return;
-
         const { error } = await supabase.from('messages').insert({
             content,
             user_id: userId,
-            channel_id: channel.id,
+            channel_id: channelId,
             type,
             media_url: mediaUrl,
             parent_id: parentId

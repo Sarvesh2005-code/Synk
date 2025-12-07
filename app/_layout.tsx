@@ -3,13 +3,13 @@ import { Slot } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../hooks/useAuth";
-import { AuthScreen } from "../components/AuthScreen";
+import AuthScreen from "../components/AuthScreen";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
-    const { session, loading } = useAuth();
+    const { session, isLoading } = useAuth();
 
-    if (loading) {
+    if (isLoading) {
         return (
             <View className="flex-1 bg-black items-center justify-center">
                 <ActivityIndicator size="large" color="#3b82f6" />

@@ -6,27 +6,31 @@ import { useChatStore } from "../store/chatStore";
 import { useAuth } from "../hooks/useAuth";
 import { ChatMediaPicker } from "./ChatMediaPicker";
 
-export function ChatInput() {
+interface ChatInputProps {
+    channelId?: string;
+}
+
+export function ChatInput({ channelId }: ChatInputProps) {
     const [text, setText] = useState("");
     const [sending, setSending] = useState(false);
     const { sendMessage, replyingTo, setReplyingTo } = useChatStore();
     const { session } = useAuth();
 
     const handleSend = async () => {
-        if (!text.trim() || !session?.user) return;
+        if (!text.trim() || !session?.user || !channelId) return;
 
         const content = text.trim();
         setText("");
         setSending(true);
 
         // Pass parentId if replying
-        await sendMessage(content, session.user.id, 'text', undefined, replyingTo?.id);
+        await sendMessage(content, session.user.id, channelId, 'text', undefined, replyingTo?.id);
         setSending(false);
     };
 
     const handleImageSelected = async (url: string) => {
-        if (!session?.user) return;
-        await sendMessage("Sent an image", session.user.id, 'image', url, replyingTo?.id);
+        if (!session?.user || !channelId) return;
+        await sendMessage("Sent an image", session.user.id, channelId, 'image', url, replyingTo?.id);
     };
 
     return (
